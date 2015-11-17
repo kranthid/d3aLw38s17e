@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DEAL Updation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css" />
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Admin Catalogue</a>
+        </div>
+        <div>
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Create<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="create_deal.html">Deals</a></li>
+                    <li><a href="create_category.html">Categories</a></li>
+                    <li><a href="create_user.html">Users</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Details<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="show_deals.html">Deals</a></li>
+                    <li><a href="show_category.html">Categories</a></li>
+                    <li><a href="show_users.html">Users</a></li>
+                  </ul>
+                </li>
+                <li><a href="#">Page 3lll</a></li>
+              </ul>
+        </div>
+      </div>
+    </nav>
+<div class="container">
+
+<div class="page-header">
+    <h1>Deal Updation form</h1>
+</div>
+
+<!-- Registration form - START -->
+<div class="container">
+    <div class="row">
+        <form role="form" id="createPanel">
+            <div class="col-sm-6">
+                <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+                <div class="form-group">
+                    <label for="InputName">Id</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control"  id="Id" placeholder="Enter Id" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputEmail">User Id</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="uid"  placeholder="Enter User Id" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputEmail">Deal Url</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="url"  placeholder="Enter Deal Url" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputMessage">Title</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="title"  placeholder="Enter Title" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputMessage">Deal Price</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="deal_price"  placeholder="Enter Deal Price" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputMessage">Deal availability</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="deal_avaialbility"  placeholder="Enter Deal Availability" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InputMessage">City postcode</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="city_postcode"  placeholder="Enter City Postcode" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+	            <div class="form-group">
+                    <label for="InputMessage">Deal category</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="category"  placeholder="Enter Deal Category" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+	            <div class="form-group">
+                    <label for="InputMessage">Deal topic</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="topic"  placeholder="Enter Deal Topic" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+	            <div class="form-group">
+                    <label for="InputMessage">Discount</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="discount"  placeholder="Enter Discount" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+	            <div class="form-group">
+                    <label for="InputMessage">Discount code</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="discount_code"  placeholder="Enter Discount Code" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+	            <div class="form-group">
+                    <label for="InputMessage">Detail</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="detail"  placeholder="Enter Detail" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+		        <div class="form-group">
+                    <label for="InputMessage">Prize</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="prize"  placeholder="Enter Prize" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+			</div>
+			<div class="col-sm-6">
+		        <div class="form-group">
+                    <label for="InputMessage">Period</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="period"  placeholder="Enter Period" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+		        <div class="form-group">
+                    <label for="InputMessage">Deal Image</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="image"  placeholder="Enter Image" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+	            <div class="form-group">
+                    <label for="InputMessage">Deal image url</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="image_url"  placeholder="Enter Image Url" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+	            <div class="form-group">
+                    <label for="InputMessage">Tags</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="tags"  placeholder="Enter Tags" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+		        <div class="form-group">
+                    <label for="InputMessage">Deal rule</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="rule"  placeholder="Enter Deal Rule" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+		        <div class="form-group">
+                    <label for="InputMessage">Link to rule</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="link_rule"  placeholder="Enter Link To Rule" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+		        <div class="form-group">
+                    <label for="InputMessage">apply to</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="apply_to"  placeholder="Enter Apply To" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+		        <div class="form-group">
+                    <label for="InputMessage">Report</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="report"  placeholder="Confirm Email" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+		        <div class="form-group">
+                    <label for="InputMessage">Deal like</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="like"  placeholder="Enter Deal Like" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+		        <div class="form-group">
+                    <label for="InputMessage">Deal dislike</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="dislike"  placeholder="Enter Dislike" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+			    <div class="form-group">
+                    <label for="InputMessage">Start date</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="sdate"  placeholder="Enter Start Date" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+			    <div class="form-group">
+                    <label for="InputMessage">End date</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="edate"  placeholder="Enter End Date" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+			    <div class="form-group">
+                    <label for="InputMessage">Status</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="status"  placeholder="Enter Status" required>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                    </div>
+                </div>
+                <button type="submit" id="submit"  class="btn btn-info pull-right" onclick="sendToServer()">Save</button>
+				<button type="cancel" id="cancel" class="btn btn-danger pull-left" onclick="clearFunction()">Cancel</button>
+            </div>
+        </form>
+<!--         <div class="col-lg-5 col-md-push-1">
+            <div class="col-md-12">
+                <div class="alert alert-success">
+                    <strong><span class="glyphicon glyphicon-ok"></span> Success! Message sent.</strong>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+<!-- Registration form - END -->
+
+</div>
+<script type="text/javascript">
+	function clearFunction(){
+	
+		document.getElementById("createPanel").reset();
+	}
+	function sendToServer(){
+            var objData = {
+                            "Id": $('#Id').val(),
+                            "user_id": $('#uid').val(),
+                            "deal_url":  $('#url').val(),
+                            "title":  $('#title').val(),
+                            "deal_price":  $('#deal_price').val(),
+                            "deal_availablity":  $('#deal_availablity').val(),
+                            "city_postcode": $('#city_postcode').val(),
+                            "deal_category": $('#category').val(),
+                            "deal_topic": $('#topic').val(),
+                            "discount": $('#discount').val(),
+                            "discount_code": $('#discount_code').val(),
+                            "detail": $('#detail').val(),
+                            "prize": $('#prize').val(),
+                            "period": $('#period').val(),
+                            "deal_image": $('#image').val(),
+                            "deal_image_url":$('#image_url').val(),
+                            "tags": $('#tags').val(),
+                            "deal_rule": $('#rule').val(),
+                            "link_to_rule": $('#link_rule').val(),
+                            "apply_to": $('#apply_to').val(),
+                            "report": $('#report').val(),
+                            "deal_like": $('#like').val(),
+                            "deal_dislike": $('#dislike').val(),
+                            "start_date": $('#sdate').val(),
+                            "end_date": $('#edate').val(),
+                            "status": $('#status').val()
+                        };
+            var phpPostUrl = "http://localhost/php/Deal_market/public/api/deal/create"
+            $.ajax({
+                url : phpPostUrl,
+                type: "POST",
+                data : objData,
+                success: function(data, textStatus, jqXHR)
+                {
+                    console.log("Data sent to the server >>>>>>>>>>>>>>>>",data)
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                    console.log("Error while sending data to the server>>>>>>>>>>>>>>>>",errorThrown)
+                }
+            });
+
+	}
+</script>
+</body>
+</html>

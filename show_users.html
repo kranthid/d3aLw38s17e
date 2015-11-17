@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Show Category</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.min.css" />
+    
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+    
+</head>
+<body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Admin Catalogue</a>
+        </div>
+        <div>
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Create<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="create_deal.html">Deals</a></li>
+                    <li><a href="create_category.html">Categories</a></li>
+                    <li><a href="create_user.html">Users</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Details<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="show_deals.html">Deals</a></li>
+                    <li><a href="show_category.html">Categories</a></li>
+                    <li><a href="show_users.html">Users</a></li>
+                  </ul>
+                </li>
+                <li><a href="#">Page 3lll</a></li>
+              </ul>
+        </div>
+      </div>
+    </nav>
+<div class="container">
+
+<div class="page-header">
+    <h1>Categories Details</h1>
+</div>
+
+<!-- Registration form - START -->
+<div class="container">
+    <div class="row">
+        <form role="form" id="createPanel">
+            <div class="col-lg-6">
+				<table id="deals" class="display table-hover table-bordered" cellspacing="0" width="100%">
+				        <thead>
+				            <tr>
+				                <th>Id</th>
+				                <th>User Login</th>
+				                <th>Update / Delete</th>
+				            </tr>
+				        </thead>
+				</table>
+			</div>
+        </form>
+    </div>
+</div>
+<!-- Registration form - END -->
+<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+            <h4 class="modal-title" id="myModalLabel">Update User</h4>
+            </div>
+            <div class="modal-body">
+		        <form role="form" id="createPanel">
+		                <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+		                <div class="form-group">
+		                    <label for="InputName">Id</label>
+		                    <div class="input-group">
+		                        <input type="text" class="form-control"  id="Id" placeholder="Enter Id" required disabled>
+		                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+		                    </div>
+		                </div>
+		                <div class="form-group">
+		                    <label for="InputEmail">User Login</label>
+		                    <div class="input-group">
+		                        <input type="text" class="form-control" id="user_login"  placeholder="Enter Category name" required>
+		                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+		                    </div>
+		                </div>
+		                <div class="form-group">
+		                    <label for="InputEmail">Provide Id</label>
+		                    <div class="input-group">
+		                        <input type="text" class="form-control" id="provide_id"  placeholder="Enter status" required>
+		                        <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+		                    </div>
+		                </div>
+		        </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="modalSave" onclick = "updateUserData()">Save changes</button>
+            </div>    
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<script type="text/javascript" src="js/show_user.js"></script>
+</body>
+</html>
