@@ -50,10 +50,10 @@ class Login_Model
      *
      * @return bool
      */
-    public function register_user( $provider, $identifier, $email, $password, $first_name, $last_name, $avatar_url)
+    public function register_user( $provider, $identifier, $email, $password, $first_name, $last_name, $avatar_url, $token)
     {
         try {
-            $sql = "INSERT INTO user (provider, identifier, email, password, first_name, last_name, avatar_url) VALUES (:provider, :identifier, :email, :password, :first_name, :last_name, :avatar_url)";
+            $sql = "INSERT INTO user (provider, identifier, email, password, first_name, last_name, avatar_url, token) VALUES (:provider, :identifier, :email, :password, :first_name, :last_name, :avatar_url, :token)";
 
             $query = $this->conn->prepare($sql);
             $query->bindValue(':provider', $provider);
@@ -63,6 +63,7 @@ class Login_Model
             $query->bindValue(':first_name', $first_name);
             $query->bindValue(':last_name', $last_name);
             $query->bindValue(':avatar_url', $avatar_url);
+            $query->bindValue(':token', $token);
 
             return $query->execute();
         } catch (\PDOException $e) {
@@ -78,9 +79,20 @@ class Login_Model
      *
      * @param int $identifier
      */
-    public function login_user($identifier)
+    public function login_user($identifier, $token)
     {
         \Hybrid_Auth::storage()->set('user', $identifier);
+        \Hybrid_Auth::storage()->set('oAuthToken', $token);
+        try {
+            $sql = "UPDATE user SET token = :token WHERE identifier=:identifier";
+
+            $query = $this->conn->prepare($sql);
+            $query->bindValue(':identifier', $identifier);
+            $query->bindValue(':token', $token);
+            return $query->execute();
+        } catch (\PDOException $e) {
+            return $e->getMessage();
+        }
     }
 
 
@@ -88,6 +100,7 @@ class Login_Model
     public function logout_user()
     {
         \Hybrid_Auth::storage()->set( 'user', null );
+        \Hybrid_Auth::storage()->set('oAuthToken', null);
     }
 
     /**
@@ -192,6 +205,24 @@ class Login_Model
         $result = $query->fetch( \PDO::FETCH_NUM );
 
         return $result[0];
+    }
+
+    /**
+     * Return token.
+     *
+     * @param $token, $uid
+     *
+     * @return string
+     */
+    public function validateToken($uid, $token)
+    {
+        
+        $query = $this->conn->prepare( "SELECT token FROM user WHERE identifier = :uid");
+        $query->bindParam( ':uid', $uid );
+        $query->execute();
+        $result = $query->fetch( \PDO::FETCH_NUM );
+
+        return ($result[0] == $token);
     }
 
 }

@@ -2,6 +2,7 @@
 include 'db.php';
 require 'Slim/Slim.php';
 require 'Login/Login_Model.php';
+require_once('Slim/TokenAuth.php');
 \Slim\Slim::registerAutoloader();
 
 /*
@@ -21,6 +22,7 @@ $app->container->singleton( 'hybridInstance', function () {
 } );
 
 $model = new \Model\Login_Model( getDB() );
+$app->add(new \TokenAuth($model));
 
 //include login apis
 include 'login_api.php';

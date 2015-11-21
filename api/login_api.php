@@ -6,11 +6,9 @@ $authenticate = function ( $app ) {
         $session_identifier = Hybrid_Auth::storage()->get('user');
 
         if (is_null( $session_identifier )) {
-            echo 'Not logged in';
-            //$app->redirect( '/login/' );
-            return false;
+            echo false;
         }else{
-            return true;
+            echo true;
         }
     };
 };
@@ -35,11 +33,11 @@ $app->get( '/login/:idp', function ( $idp ) use ( $app, $model ) {
             }
 
             $identifier = $user_profile->identifier;
-
+            $token = bin2hex(openssl_random_pseudo_bytes(8)); //generate a random token
+ 
             if ($model->identifier_exists( $identifier )) {
-                $model->login_user( $identifier );
-                //echo "exist user". $redirect_url;
-               	$app->redirect( $site_url."/home" );
+                $model->login_user( $identifier, $token);
+                echo '{"userID":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
             } else {
             	//provider, identifier, email, password, first_name, last_name, avatar_url
 
@@ -50,15 +48,14 @@ $app->get( '/login/:idp', function ( $idp ) use ( $app, $model ) {
                     "",
                     $user_profile->firstName,
                     $user_profile->lastName,
-                    $user_profile->photoURL
+                    $user_profile->photoURL,
+                    $token
                 );
 
                 if ($register) {
-                    $model->login_user( $identifier );
-                    //echo "registered";
-                   	$app->redirect( $site_url.'/home' );
+                    $model->login_user( $identifier, $token );
+                    echo '{"userID":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
                 }
-
             }
 
         } catch ( Exception $e ) {
@@ -67,20 +64,25 @@ $app->get( '/login/:idp', function ( $idp ) use ( $app, $model ) {
     }
 );
 
-//Local login/registration
+//Local login
 $app->post( '/local/login', function ( ) use ( $app, $model ) {
         try {
             global $site_url;
 
             $request = \Slim\Slim::getInstance()->request();
             $object = json_decode($request->getBody());
-
+            $token = bin2hex(openssl_random_pseudo_bytes(8)); //generate a random token
+            
             if ($model->localLoginAuth( $object -> user_id, $object -> password )) {
-                $app->hybridInstance->storage()->set('user', $object -> user_id );
-                echo 'success';
+                $app->hybridInstance;
+                $model->login_user( $object -> user_id, $token );
+
+                //$app->hybridInstance->storage()->set('user', $object -> user_id );
+                //$app->hybridInstance->storage()->set('oAuthToken', $token );
+               echo '{"userID":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
+                
             }else{
                 echo 'Wrong Credentials!';
-                return 'Wrong Credentials!';
             }
         } catch ( Exception $e ) {
             echo $e->getMessage();
@@ -88,13 +90,15 @@ $app->post( '/local/login', function ( ) use ( $app, $model ) {
     }
 );
 
-//Local login/registration
+//Local registration
 $app->post( '/local/register', function ( ) use ( $app, $model ) {
         try {
             global $site_url;
 
             $request = \Slim\Slim::getInstance()->request();
             $object = json_decode($request->getBody());
+            $token = bin2hex(openssl_random_pseudo_bytes(8)); //generate a random token
+
             if ($model->identifier_exists( $object -> user_id )) {
                 echo 'UserID already exists!';
             } else {
@@ -106,14 +110,17 @@ $app->post( '/local/register', function ( ) use ( $app, $model ) {
                     $object->passwd,
                     $object->firstname,
                     $object->lastname,
-                    ''
+                    '',
+                    $token
                 );
 
                 if ($register) {
-                    //$model->login_user( $object -> user_id );
-                    $app->hybridInstance->storage()->set('user', $object -> user_id );
-                    echo 'sucess';
-                    //$app->redirect( $site_url.'/home' );
+                    $app->hybridInstance;
+                    $model->login_user( $object -> user_id, $token );
+                    //$app->hybridInstance->storage()->set('user', $object -> user_id );
+                    //$app->hybridInstance->storage()->set('oAuthToken', $token );
+                    echo '{"userID":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
+                
                 }
             }
         } catch ( Exception $e ) {
