@@ -1,19 +1,25 @@
 <?php
 //CRUD for deals APIs
-$app->get('/deals/all','getAllDealsData');
-$app->get('/deals/dcat/:dealcategory/all','getAllDealsDataBasedOnCategory');
-$app->get('/deals/dcat/:dealcategory/dsubcat/:dealsubcategory/all','getAllDealsDataBasedOnCategoryAndSubCategory');
-$app->get('/deals/dealId/:dealId','getDealsDataBasedOnId');
+$app->get('/deal/all','getAllDeals');
+$app->get('/deal/category/:catid/all','getAllDealsByCategory');
+$app->get('/deal/category/:catid/subcategory/:subcatid/all','getAllDealsByCategoryAndSubCategory');
+$app->get('/deal/:dealid','getDealsById');
+$app->get('/deal/latestdeals','getLatestDeals');
+
 $app->post('/deal/create','createNewDeal');
 $app->put('/deals/dealId/:dealId','updateExistingDeal');
 $app->delete('/deals/dealId/:dealId','deleteExistingDeal');
 //------------------------------------------//
+
 //Comments and likes for a deal
-$app->get('/deals/uid/:uid/dcat/:category/dsubcat/:subcat/dealid/:id/comments','getAllDealcomments');
-$app->get('/deals/uid/:uid/dcat/:category/dsubcat/:subcat/dealid/:id/likes','getAllDealLikes');
-$app->post('/deals/uid/:uid/dcat/:category/dsubcat/:subcat/dealid/:id/comments/create','createNewCommentForDeal');
-$app->put('/deals/uid/:uid/dcat/:category/dsubcat/:subcat/dealid/:id/comid/:cid/comments/update','updateCommentForDeal');
-$app->delete('/uid/:uid/deals/dealid/:id/comments/cid/:cid/remove','deleteCommentForDeal');
+/*$app->get('/deal/:dealid/comments','getAllDealcomments');
+$app->post('/deal/:dealid/userid/:uid/comments/create','createNewCommentForDeal');
+$app->delete('deal/:dealid/userid/:uid/comments/remove','deleteCommentForDeal');
+$app->post('deal/:dealid/userid/:uid/comments/like','');
+$app->post('deal/:dealid/userid/:uid/comments/ignore','');
+
+$app->post('deal/:dealid/userid/:uid/like','');
+$app->post('deal/:dealid/userid/:uid/dislike','');*/
 
 
 /*
@@ -21,7 +27,7 @@ $app->delete('/uid/:uid/deals/dealid/:id/comments/cid/:cid/remove','deleteCommen
 ****CRUD for deals APIs functions start ****
 */
 
-function getAllDealsData() {
+function getAllDeals() {
     $sqlCommand = "SELECT * FROM deal WHERE 1";
     try {
         $db = getDB();
@@ -34,13 +40,37 @@ function getAllDealsData() {
     }
 }
 
-function getAllDealsDataBasedOnCategory($dealcategory) {
+function getAllDealsByCategory($dealcategory) {
     $queryParam = (string)$dealcategory;
     $sqlCommand = "SELECT * FROM deal WHERE deal_category = '$queryParam'";
     try {
         $db = getDB();
         $stmt = $db->query($sqlCommand);  
         $deals = $stmt->fetchAll(PDO::FETCH_OBJ);
+        foreach ($deals as $key => $value) {
+            $tmpId = $value->id;
+            $sqlCommandForSocialLikes ="SELECT count(*) as deal_like FROM deal_social_activity WHERE
+                                        deal_social_activity.deal_id = '$tmpId' AND deal_social_activity.activity_type = 
+                                        'LIKE' GROUP BY deal_social_activity.activity_type";
+            $sqlCommandForSocialDisLikes ="SELECT count(*) as deal_dis_like FROM deal_social_activity WHERE
+                                        deal_social_activity.deal_id = '$tmpId' AND deal_social_activity.activity_type = 
+                                        'DISLIKE' GROUP BY deal_social_activity.activity_type";
+            $stmtLikeFinder = $db->query($sqlCommandForSocialLikes);  
+            $likes = $stmtLikeFinder->fetchAll(PDO::FETCH_OBJ);
+            $stmtDisLikeFinder = $db->query($sqlCommandForSocialDisLikes);  
+            $dislikes = $stmtDisLikeFinder->fetchAll(PDO::FETCH_OBJ);
+            if(count($likes)){
+                $deals[$key]->deal_like=$likes[0]->deal_like;   
+            }else{
+                $deals[$key]->deal_like=0;
+            }
+            if(count($dislikes)){
+                $deals[$key]->deal_dislike=$dislikes[0]->deal_dis_like; 
+            }else{
+                $deals[$key]->deal_dislike=0;
+            }
+
+        }
         try {
             $findCommand = "SELECT * FROM deal_type WHERE id = '$queryParam'";
             $stmtFind = $db->query($findCommand);  
@@ -60,7 +90,7 @@ function getAllDealsDataBasedOnCategory($dealcategory) {
 }
 
 
-function getAllDealsDataBasedOnCategoryAndSubCategory($mainCat,$subCat){
+function getAllDealsByCategoryAndSubCategory($mainCat,$subCat){
     $queryParamForMain = (string)$mainCat;
     $queryParamForSub = (string)$subCat;
     $sqlCommand = "SELECT * from deal where deal_category='$queryParamForMain' and deal_sub_category='$queryParamForSub'  and status=1 and end_date >= CURDATE()";
@@ -68,6 +98,30 @@ function getAllDealsDataBasedOnCategoryAndSubCategory($mainCat,$subCat){
         $db = getDB();
         $stmt = $db->query($sqlCommand);  
         $deals = $stmt->fetchAll(PDO::FETCH_OBJ);
+        foreach ($deals as $key => $value) {
+            $tmpId = $value->id;
+            $sqlCommandForSocialLikes ="SELECT count(*) as deal_like FROM deal_social_activity WHERE
+                                        deal_social_activity.deal_id = '$tmpId' AND deal_social_activity.activity_type = 
+                                        'LIKE' GROUP BY deal_social_activity.activity_type";
+            $sqlCommandForSocialDisLikes ="SELECT count(*) as deal_dis_like FROM deal_social_activity WHERE
+                                        deal_social_activity.deal_id = '$tmpId' AND deal_social_activity.activity_type = 
+                                        'DISLIKE' GROUP BY deal_social_activity.activity_type";
+            $stmtLikeFinder = $db->query($sqlCommandForSocialLikes);  
+            $likes = $stmtLikeFinder->fetchAll(PDO::FETCH_OBJ);
+            $stmtDisLikeFinder = $db->query($sqlCommandForSocialDisLikes);  
+            $dislikes = $stmtDisLikeFinder->fetchAll(PDO::FETCH_OBJ);
+            if(count($likes)){
+                $deals[$key]->deal_like=$likes[0]->deal_like;   
+            }else{
+                $deals[$key]->deal_like=0;
+            }
+            if(count($dislikes)){
+                $deals[$key]->deal_dislike=$dislikes[0]->deal_dis_like; 
+            }else{
+                $deals[$key]->deal_dislike=0;
+            }
+
+        }
         try {
             $findMainCommand = "SELECT * FROM deal_type WHERE id = '$queryParamForMain'";
             $findSubCommand = "SELECT * FROM deal_sub_category WHERE id = '$queryParamForSub'";
@@ -91,20 +145,66 @@ function getAllDealsDataBasedOnCategoryAndSubCategory($mainCat,$subCat){
 }
 
 
-function getDealsDataBasedOnId($dealId) {
-    $queryParam = (string)$dealId;
-    $sqlCommand = "SELECT * FROM deal WHERE Id = '$queryParam'";
+function getDealsById($dealId) {
+    $queryParamForDealId = (string)$dealId;
+    $sqlCommand = "SELECT * FROM deal WHERE Id = '$queryParamForDealId'";
+    $sqlCommandForSocialLikes =  "SELECT count(*) as deal_like FROM deal_social_activity WHERE
+                            deal_social_activity.deal_id = '$queryParamForDealId' AND deal_social_activity.activity_type = 'LIKE' GROUP BY deal_social_activity.activity_type";
+    $sqlCommandForSocialDisLikes =  "SELECT count(*) as deal_dis_like FROM deal_social_activity WHERE
+                                    deal_social_activity.deal_id = '$queryParamForDealId' AND deal_social_activity.activity_type = 'DISLIKE' GROUP BY deal_social_activity.activity_type";
     try {
         $db = getDB();
-        $stmt = $db->query($sqlCommand);  
+        $stmt = $db->query($sqlCommand);
+        $likes =  $db->query($sqlCommandForSocialLikes);
+        $dislikes =  $db->query($sqlCommandForSocialDisLikes); 
         $deals = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $likesData = $likes->fetchAll(PDO::FETCH_OBJ);
+        $dislikesData = $dislikes->fetchAll(PDO::FETCH_OBJ);
+        $categoryParam = $deals[0]->deal_category;
+        $subCategoryParam = $deals[0]->deal_sub_category;
+        $findMainCategory = "SELECT * FROM deal_type WHERE id = '$categoryParam'";
+        $findSubCategory= "SELECT * FROM deal_sub_category WHERE id = '$subCategoryParam'";
+        $stmtFindMain = $db->query($findMainCategory);
+        $stmtFindSub  = $db-> query($findSubCategory);
+        $categoryMain = $stmtFindMain->fetchAll(PDO::FETCH_OBJ);
+        $categorySub = $stmtFindSub->fetchAll(PDO::FETCH_OBJ);
         $db = null;
-        echo '{"deal": ' . json_encode($deals) . '}';
+            if(count($likesData)){
+                $likesData = $likesData[0]->deal_like;
+            }else{
+                $likesData = 0;
+            }
+            if(count($dislikesData)){
+                $dislikesData = $dislikesData[0]->deal_dis_like;
+            }else{
+                $dislikesData = 0;
+            }
+            $deal_data = array(
+              'deals' => array(
+                'deal_type' => $categoryMain[0] ->category_name,
+                'deal_topic' => $categorySub[0]->sub_category_name,
+                 'deal_id' => $deals[0] ->id,
+                  'deal_url'=> $deals[0] ->deal_url,
+                  'title'=>$deals[0] ->title,
+                  'detail'=>$deals[0] ->detail,
+                  'deal_image'=>$deals[0] ->deal_image,
+                  'deal_image_url'=>$deals[0] ->deal_image_url,
+                  'tags'=>$deals[0] ->tags,
+                  'report'=>$deals[0] ->report,
+                  'deal_like'=> $likesData,
+                  'deal_dislike'=> $dislikesData, 
+              )
+            );
+            echo json_encode($deal_data);
+        //echo '{"deal": ' . json_encode($deals) . '}';
     } catch(PDOException $e) {
         echo '{"error":{"text":'. $e->getMessage() .'}}'; 
     }
 }
 
+function getLatestDeals() {
+    
+}
 
 function createNewDeal(){
     $request = \Slim\Slim::getInstance()->request();
@@ -215,6 +315,6 @@ function deleteExistingDeal($dealId){
 }
 /*
 *
-****CRUD for deals APIs functions end ****
+****End of CRUD for deals APIs functions ****
 */
 ?>

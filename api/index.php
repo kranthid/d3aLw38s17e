@@ -28,7 +28,7 @@ $app->add(new \TokenAuth($model));
 include 'login_api.php';
 
 //include deals apis
-
+include 'deals_api.php';
 
 $app->run();
 ?>
