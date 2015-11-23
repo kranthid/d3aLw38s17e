@@ -7,19 +7,16 @@ $app->get('/deal/:dealid','getDealsById');
 $app->get('/deal/latestdeals','getLatestDeals');
 
 $app->post('/deal/create','createNewDeal');
-$app->put('/deals/dealId/:dealId','updateExistingDeal');
-$app->delete('/deals/dealId/:dealId','deleteExistingDeal');
+$app->put('/deal/:dealid/update','updateExistingDeal');
+$app->delete('/deal/:dealid','deleteExistingDeal');
 //------------------------------------------//
 
 //Comments and likes for a deal
-/*$app->get('/deal/:dealid/comments','getAllDealcomments');
+$app->get('/deal/:dealid/comments','getAllDealcomments');
 $app->post('/deal/:dealid/userid/:uid/comments/create','createNewCommentForDeal');
-$app->delete('deal/:dealid/userid/:uid/comments/remove','deleteCommentForDeal');
-$app->post('deal/:dealid/userid/:uid/comments/like','');
-$app->post('deal/:dealid/userid/:uid/comments/ignore','');
 
-$app->post('deal/:dealid/userid/:uid/like','');
-$app->post('deal/:dealid/userid/:uid/dislike','');*/
+$app->post('/deal/:dealid/userid/:uid/socialactivity/:actvty','postLikesAndDislikesForDeals');
+$app->post('/deal/comments/:cmtid/userid/:uid/socialactivity/:actvty','postLikesAndDislikesForComments');
 
 
 /*
@@ -313,6 +310,153 @@ function deleteExistingDeal($dealId){
         echo '{"error":{"text":'. $e->getMessage() .'}}'; 
     }
 }
+
+
+function getAllDealcomments($id){
+    $queryParamForDealId = (string)$id;
+    $sqlCommand = "SELECT * FROM deal WHERE Id = '$queryParamForDealId'";
+    $sqlCommandForSocialLikes =  "SELECT count(*) as deal_like FROM deal_social_activity WHERE
+                            deal_social_activity.deal_id = '$queryParamForDealId' AND deal_social_activity.activity_type = 'LIKE' GROUP BY deal_social_activity.activity_type";
+    $sqlCommandForSocialDisLikes =  "SELECT count(*) as deal_dis_like FROM deal_social_activity WHERE
+                                    deal_social_activity.deal_id = '$queryParamForDealId' AND deal_social_activity.activity_type = 'DISLIKE' GROUP BY deal_social_activity.activity_type";
+    $sqlCommandForComments = "SELECT * FROM comments WHERE deal_id = '$queryParamForDealId' ";
+    try {
+        $db = getDB();
+        $stmt = $db->query($sqlCommand);
+        $likes =  $db->query($sqlCommandForSocialLikes);
+        $dislikes =  $db->query($sqlCommandForSocialDisLikes); 
+        $comments = $db->query($sqlCommandForComments);
+        $deals = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $likesData = $likes->fetchAll(PDO::FETCH_OBJ);
+        $dislikesData = $dislikes->fetchAll(PDO::FETCH_OBJ);
+        $commentsData = $comments->fetchAll(PDO::FETCH_OBJ);
+        $categoryParam = $deals[0]->deal_category;
+        $subCategoryParam = $deals[0]->deal_sub_category;
+        $findMainCategory = "SELECT * FROM deal_type WHERE id = '$categoryParam'";
+        $findSubCategory= "SELECT * FROM deal_sub_category WHERE id = '$subCategoryParam'";
+        $stmtFindMain = $db->query($findMainCategory);
+        $stmtFindSub  = $db-> query($findSubCategory);
+        $categoryMain = $stmtFindMain->fetchAll(PDO::FETCH_OBJ);
+        $categorySub = $stmtFindSub->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+            if(count($likesData)){
+                $likesData = $likesData[0]->deal_like;
+            }else{
+                $likesData = 0;
+            }
+            if(count($dislikesData)){
+                $dislikesData = $dislikesData[0]->deal_dis_like;
+            }else{
+                $dislikesData = 0;
+            }
+            $deal_data = array(
+                'deals' => array(
+                    'deal_type' => $categoryMain[0] ->category_name,
+                    'deal_topic' => $categorySub[0]->sub_category_name,
+                    'deal_id' => $deals[0] ->id,
+                    'deal_url'=> $deals[0] ->deal_url,
+                    'title'=>$deals[0] ->title,
+                    'detail'=>$deals[0] ->detail,
+                    'deal_image'=>$deals[0] ->deal_image,
+                    'deal_image_url'=>$deals[0] ->deal_image_url,
+                    'tags'=>$deals[0] ->tags,
+                    'report'=>$deals[0] ->report,
+                    'deal_like'=> $likesData,
+                    'deal_dislike'=> $dislikesData,
+                    'deal_comments'=> $commentsData
+                )
+            );
+            echo json_encode($deal_data);
+        //echo '{"deal": ' . json_encode($deals) . '}';
+    } catch(PDOException $e) {
+        echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+    }
+    
+}
+function createNewCommentForDeal($dealid, $uid){
+    $queryParamForDealId = (string)$dealid;
+    $queryParamForUserId = (string)$uid;
+    $request = \Slim\Slim::getInstance()->request();
+    $insert = json_decode($request->getBody());
+
+    //ON DUPLICATE KEY UPDATE comments SET deal_id=:deal_id,user_id=:user_id,comment_content=:comment_content,comment_date=:comment_date,comment_parent=:comment_parent,comment_report=:comment_report,comment_status=:comment_status,category_id=:category_id, sub_category_id=:sub_category_id
+
+    $sqlCommandForComments = "INSERT INTO comments 
+    (deal_id,user_id,user_name,comment_content,comment_date,comment_parent,comment_report,comment_status) VALUES (:deal_id,:user_id,:user_name,:comment_content,:comment_date,:comment_parent,:comment_report,:comment_status)";
+    try {
+            $db = getDB();
+            $stmt = $db->prepare($sqlCommandForComments);  
+            $stmt->bindParam("deal_id", $dealid);
+            $stmt->bindParam("user_id", $uid);
+            $stmt->bindParam("user_name", $insert->user_name);
+            $stmt->bindParam("comment_content", $insert->comment_content);
+            $stmt->bindParam("comment_date", $insert->comment_date);
+            $stmt->bindParam("comment_parent", $insert->comment_parent);
+            $stmt->bindParam("comment_report", $insert->comment_report);
+            $stmt->bindParam("comment_status", $insert->comment_status);
+            $status = $stmt->execute(); 
+            $db = null;
+            echo '{"status":'.$status.'}';
+        } catch(PDOException $e) {
+            $dbConnection = null;
+            echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+        }
+}
+function postLikesAndDislikesForDeals($dealid,$uid,$action){
+    $queryParamForDealId = (string)$dealid;
+    $queryParamForUserId = (string)$uid;
+    $queryParamForSocialAction = strtoupper((string)$action);
+    $request = \Slim\Slim::getInstance()->request();
+    $insert = json_decode($request->getBody());
+    //echo $request->getBody();
+    $sqlCommandForSocial = "INSERT INTO deal_social_activity 
+    (deal_id,user_id,activity_type,activity_date) VALUES 
+    (:deal_id,:user_id,:activity_type,NOW()) ON DUPLICATE KEY UPDATE deal_id=:deal_id,user_id=:user_id,activity_type=:activity_type,activity_date=NOW()";
+    
+    try {
+            $db = getDB();
+            
+            $stmt = $db->prepare($sqlCommandForSocial);  
+            $stmt->bindParam("deal_id", $queryParamForDealId);
+            $stmt->bindParam("user_id", $queryParamForUserId);
+            $stmt->bindParam("activity_type", $queryParamForSocialAction);
+            $status = $stmt->execute(); 
+            $db = null;
+            echo '{"status":'.$status.'}';
+        } catch(PDOException $e) {
+            $dbConnection = null;
+            echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+        }
+
+}
+function postLikesAndDislikesForComments($commentid,$uid,$action){
+    $queryParamForCommentId = (string)$commentid;
+    $queryParamForUserId = (string)$uid;
+    $queryParamForSocialAction = strtoupper((string)$action);
+    $request = \Slim\Slim::getInstance()->request();
+    $insert = json_decode($request->getBody());
+    //echo $request->getBody();
+    $sqlCommandForSocial = "INSERT INTO deal_social_activity 
+    (comment_id,user_id,activity_type,activity_date) VALUES 
+    (:comment_id,:user_id,:activity_type,NOW()) ON DUPLICATE KEY UPDATE comment_id=:comment_id,user_id=:user_id,activity_type=:activity_type,activity_date=NOW()";
+    
+    try {
+            $db = getDB();
+            
+            $stmt = $db->prepare($sqlCommandForSocial);  
+            $stmt->bindParam("comment_id", $queryParamForCommentId);
+            $stmt->bindParam("user_id", $queryParamForUserId);
+            $stmt->bindParam("activity_type", $queryParamForSocialAction);
+            $status = $stmt->execute(); 
+            $db = null;
+            echo '{"status":'.$status.'}';
+        } catch(PDOException $e) {
+            $dbConnection = null;
+            echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+        }
+
+}
+
 /*
 *
 ****End of CRUD for deals APIs functions ****
