@@ -37,7 +37,7 @@ $app->get( '/login/:idp', function ( $idp ) use ( $app, $model ) {
  
             if ($model->identifier_exists( $identifier )) {
                 $model->login_user( $identifier, $token);
-                echo '{"userID":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
+                echo '{"userid":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
             } else {
             	//provider, identifier, email, password, first_name, last_name, avatar_url
 
@@ -54,7 +54,7 @@ $app->get( '/login/:idp', function ( $idp ) use ( $app, $model ) {
 
                 if ($register) {
                     $model->login_user( $identifier, $token );
-                    echo '{"userID":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
+                    echo '{"userid":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
                 }
             }
 
@@ -79,10 +79,10 @@ $app->post( '/local/login', function ( ) use ( $app, $model ) {
 
                 //$app->hybridInstance->storage()->set('user', $object -> user_id );
                 //$app->hybridInstance->storage()->set('oAuthToken', $token );
-               echo '{"userID":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
+               echo '{"userid":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
                 
             }else{
-                echo 'Wrong Credentials!';
+                echo '{"userid":"", "oauthtoken":""}';
             }
         } catch ( Exception $e ) {
             echo $e->getMessage();
@@ -119,7 +119,7 @@ $app->post( '/local/register', function ( ) use ( $app, $model ) {
                     $model->login_user( $object -> user_id, $token );
                     //$app->hybridInstance->storage()->set('user', $object -> user_id );
                     //$app->hybridInstance->storage()->set('oAuthToken', $token );
-                    echo '{"userID":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
+                    echo '{"userid":"'.$app->hybridInstance->storage()->get("user").'", "oauthtoken":"'.$app->hybridInstance->storage()->get("oAuthToken").'"}';
                 
                 }
             }
