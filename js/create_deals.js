@@ -1,28 +1,30 @@
-var deal_ary = new Array("DataUrl", "Title", "Price", "Topic", "Details", "Upload Image", "Image URL", "Tags", "Start Date", "End Date");
+var deal_ary = new Array("DEAL URL", "TITLE", "PRICE", "TOPIC", "DETAILS", "ENTER IMAGE URL", "TAGS", "START DATE", "END DATE");
+var voucher_array = new Array("DEAL URL", "TITLE", "TOPIC", "Discount ", "code", "TAGS", "MINIMUM SPEND", "APPLIES TO", "INSTRUCTIONS" ,"START DATE", "END DATE");
+var freebies_array = new Array("DEAL URL", "TITLE", "TOPIC", "DETAILS", "ENTER IMAGE URL", "TAGS", "START DATE", "END DATE");
+var competitions_array = new Array("DEAL URL", "TITLE", "TOPIC", "DETAILS", "PRIZE", "PERIOD", "ENTER IMAGE URL", "TAGS", "VALUE", "RULES", "LINK TO RULES", "START DATE", "END DATE");
+        
 var selectedRadioArray = function (elem) {
     var selectedRadioId = elem.id;
+    document.getElementById('customFormElements').innerHTML = "";
     switch (selectedRadioId) {
     case 'deals':
-        var deal_ary = new Array("DataUrl", "Title", "Price", "Topic", "Details", "Upload Image", "Image URL", "Tags", "Start Date", "End Date");
-        document.getElementById('customFormElements').innerHTML = "";
         createFormElements(deal_ary);
         break;
     case 'vouchers':
-        var voucher_array = new Array("DataUrl", "Title", "Topic", "Discount", "Code", "Tags", "Minimum Speed", "Applies To", "Instructions", "Start Date", "End Date");
-        document.getElementById('customFormElements').innerHTML = "";
         createFormElements(voucher_array);
         break;
     case 'freebies':
-        document.getElementById('customFormElements').innerHTML = "";
-        break;
-    case 'ask':
-        document.getElementById('customFormElements').innerHTML = "";
+        createFormElements(freebies_array);
         break;
     case 'competitions':
-        document.getElementById('customFormElements').innerHTML = "";
+        createFormElements(competitions_array);
         break;
     }
 }
+$( document ).ready(function() {
+    document.getElementById('deals').checked = true;
+  createFormElements(deal_ary);
+});
 
 function createFormElements(formElement) {
     var append_to = document.getElementById('customFormElements');
